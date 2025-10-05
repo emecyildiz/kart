@@ -1,48 +1,50 @@
-
 import sys
 from PyQt6.QtWidgets import (
-	QApplication, QWidget, QLabel, QGraphicsOpacityEffect
+    QApplication, QWidget, QLabel, QGraphicsOpacityEffect
 )
-from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation
-
+from PyQt6.QtCore import Qt, QPropertyAnimation, QTimer
 
 def main():
-	app = QApplication(sys.argv)
-	window = QWidget()
-	window.setWindowTitle('My First PyQt6 App')
-	window.setGeometry(500, 320, 100, 170)
+    app = QApplication(sys.argv)
+    word = "TANRI"
+    windows = []  # Pencereleri burada tutuyoruz
 
-	# Create and style label
-	label = QLabel('T', window)
-	label.setStyleSheet(
-		"font-size: 100px; color: white; font-weight: bold; "
-		"font-family: Arial; padding: 10px; border-radius: 8px;"
-	)
-	label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-	label.resize(window.size())
+    for i, letter in enumerate(word):
+        window = QWidget()
+        window.setWindowTitle('Letter Display')
+        window.setGeometry(600 + (i * 120), 320, 100, 170)
+        window.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        window.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
-	# Opacity animation
-	opacity_effect = QGraphicsOpacityEffect()
-	label.setGraphicsEffect(opacity_effect)
-	animation = QPropertyAnimation(opacity_effect, b"opacity")
-	animation.setDuration(3000)
-	animation.setStartValue(0)
-	animation.setEndValue(1)
-	animation.start()
+        label = QLabel(letter, window)
+        label.setStyleSheet("""
+            font-size: 100px;
+            color: white;
+            font-weight: bold;
+            font-family: Arial;
+            padding: 10px;
+            border-radius: 8px;
+        """)
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.resize(window.size())
 
-	# Window settings
-	window.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-	window.setWindowFlags(
-		Qt.WindowType.FramelessWindowHint |
-		Qt.WindowType.WindowStaysOnTopHint
-	)
+        # Opacity efekti ve animasyon
+        opacity_effect = QGraphicsOpacityEffect()
+        label.setGraphicsEffect(opacity_effect)
 
-	# Auto-close after 5 seconds
-	QTimer.singleShot(5000, window.close)
+        animation = QPropertyAnimation(opacity_effect, b"opacity")
+        animation.setDuration(3000)  # 3 saniyede görünür olacak
+        animation.setStartValue(0)
+        animation.setEndValue(1)
 
-	window.show()
-	sys.exit(app.exec())
+        # Sakla ki çöp olmasın
+        window.animation = animation
+        windows.append(window)
 
+        # Bu şekilde lambda içinde o anki window ve animation saklanır
+        QTimer.singleShot(5000, lambda w=window, a=animation: (w.show(), a.start()))
+
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
-	main()
+    main()
