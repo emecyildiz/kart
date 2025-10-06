@@ -6,13 +6,13 @@ from PyQt6.QtCore import Qt, QPropertyAnimation, QTimer
 
 def main():
     app = QApplication(sys.argv)
-    word = "TANRI"
-    windows = []  # Pencereleri burada tutuyoruz
+    word = "WELCOME_HOME"
+    windows = []  # Store the windows here
 
     for i, letter in enumerate(word):
         window = QWidget()
         window.setWindowTitle('Letter Display')
-        window.setGeometry(600 + (i * 120), 320, 100, 170)
+        window.setGeometry(100 + (i * 120), 320, 100, 170)
         window.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         window.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
@@ -28,20 +28,20 @@ def main():
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         label.resize(window.size())
 
-        # Opacity efekti ve animasyon
+        # Opacity effect and animation
         opacity_effect = QGraphicsOpacityEffect()
         label.setGraphicsEffect(opacity_effect)
 
         animation = QPropertyAnimation(opacity_effect, b"opacity")
-        animation.setDuration(3000)  # 3 saniyede görünür olacak
+        animation.setDuration(3000)  # Will become visible in 3 seconds
         animation.setStartValue(0)
         animation.setEndValue(1)
 
-        # Sakla ki çöp olmasın
+        # Store to prevent garbage collection
         window.animation = animation
         windows.append(window)
 
-        # Bu şekilde lambda içinde o anki window ve animation saklanır
+        # This way, the current window and animation are captured in the lambda
         QTimer.singleShot(5000, lambda w=window, a=animation: (w.show(), a.start(), QTimer.singleShot(5000, w.close)))
 
     sys.exit(app.exec())
