@@ -42,7 +42,7 @@ def main():
         windows.append(window)
 
         # Bu şekilde lambda içinde o anki window ve animation saklanır
-        QTimer.singleShot(5000, lambda w=window, a=animation: (w.show(), a.start()))
+        QTimer.singleShot(5000, lambda w=window, a=animation: (w.show(), a.start(), QTimer.singleShot(5000, w.close)))
 
     sys.exit(app.exec())
 
